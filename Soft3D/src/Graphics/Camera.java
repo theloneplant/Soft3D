@@ -11,10 +11,12 @@ public class Camera
 	
 	public Camera(int width, int height)
 	{
+		// Initialize variables
 		position = new Vector3(0, 0, 0);
 		rotation = new Vector3(0, 0, 0);
 		screen = new Vector2(width, height);
-		fov = 55;
+		fov = 55; // 55 vertical FOV
+		// Check for divide by zero
 		if (height != 0)
 			aspectRatio = width / (float) height;
 		else
@@ -27,7 +29,9 @@ public class Camera
 	{
 		Vector2 point = new Vector2();
 		
+		// Scale, rotate, then translate
 		Vector3 vertexLocal = transform(vertex, modelPos, modelRot, modelScale);
+		// Rotate, then translate the camera (can't scale camera)
 		Vector3 cameraTrans = rotateY(vertexLocal, rotation);
 		Vector3 cameraRotate = rotate(cameraTrans, new Vector3(rotation.x, 0, rotation.z));
 		Vector3 cameraFinal = translate(cameraRotate, position);
@@ -35,6 +39,8 @@ public class Camera
 		double halfX = screen.x / 2;
 		double halfY = screen.y / 2;
 		
+		// Project the point using perspective
+		// This method of projection is not ideal, but works
 		point.x = ((cameraFinal.x / cameraFinal.z) * halfY * 85 / fov) + halfX;
 		point.y = (-(cameraFinal.y / cameraFinal.z) * halfY * 85 / fov) + halfY;
 		return point;
@@ -86,7 +92,8 @@ public class Camera
 	}
 	
 	public Vector3 rotate(Vector3 vertex, Vector3 rotate)
-	{		
+	{
+		// Rotate about each axis
 		Vector3 v1 = rotateX(vertex, rotate);
 		Vector3 v2 = rotateY(v1, rotate);
 		Vector3 v3 = rotateZ(v2, rotate);
@@ -107,6 +114,7 @@ public class Camera
 	
 	public Vector3 transform(Vector3 vertex, Vector3 translate, Vector3 rotate, Vector3 scale)
 	{
+		// Scale, rotate, then translate; order matters
 		Vector3 v1 = scale(vertex, scale);
 		Vector3 v2 = rotate(v1, rotate);
 		Vector3 v3 = translate(v2, translate);

@@ -24,6 +24,7 @@ public class ModelLoader
 	{
 		int vCount = 0, fCount = 0;
 		
+		// Open file
 		try
 		{
 			file = new File(name);
@@ -39,8 +40,10 @@ public class ModelLoader
 			String line = reader.nextLine();
 			String[] tokens = line.split(" ");
 			
+			// If the line is for a vertex
 			if (tokens[0].equals("v"))
 			{
+				// Get the vertex and increment how many there are
 				vCount++;
 				float v1 = Float.parseFloat(tokens[1]);
 				float v2 = Float.parseFloat(tokens[2]);
@@ -49,7 +52,7 @@ public class ModelLoader
 			}
 			else if (tokens[0].equals("f"))
 			{
-				
+				// If it's a face, get the vertex indices from it
 				fCount++;
 				if (tokens.length == 4)
 				{
@@ -77,6 +80,7 @@ public class ModelLoader
 				}
 				else
 				{
+					// Something went wrong
 					System.out.println("Incorrect File Type");
 					return null;
 				}
@@ -94,6 +98,7 @@ public class ModelLoader
 			face[i] = faces.get(i);
 		}
 		
+		// Finish cleaning up
 		mesh.setVertices(vert);
 		mesh.setFaces(face);
 		vertices.clear();
@@ -109,20 +114,25 @@ public class ModelLoader
 		double max, xCount, yCount, zCount;
 		max = xCount = yCount = zCount = 0;
 		
+		// For each vertex
 		for (int i = 0; i < list.size(); i++)
 		{
 			double v1 = list.get(i).x;
 			double v2 = list.get(i).y;
 			double v3 = list.get(i).z;
 
+			// Try to find a max
 			if (v3 > max)
 				max = v3;
 			
+			// Add up total values
 			xCount += v1;
 			yCount += v2;
 			zCount += v3;
 		}
 		
+		// Translate the model to an average position near the origin
+		// The number of vertices matter, dense areas of vertices will shift the model
 		for (int i = 0; i < list.size(); i++)
 		{
 			vertices[i] = list.get(i);
@@ -131,6 +141,7 @@ public class ModelLoader
 			vertices[i].z -= zCount / list.size();
 		}
 		
+		// Scale the model based on the max value found
 		for (int i = 0; i < list.size(); i++)
 		{
 			vertices[i].x /= max;
